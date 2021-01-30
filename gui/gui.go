@@ -1,8 +1,12 @@
 package gui
 
 import (
+	"bufio"
 	"image/color"
+	"io/ioutil"
+	"log"
 	"net/url"
+	"os"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -26,6 +30,7 @@ var (
 	passwords [99]*widget.Button
 	edits     [99]*widget.Button
 	copies    [99]*widget.Button
+	//TODO add delete button
 )
 
 //SetTextSize modifies the text size with a variadic function to make it easier
@@ -108,8 +113,59 @@ func Call() {
 	passwordTitle.Alignment = fyne.TextAlignCenter
 	SetTextSize(20, serviceTitle, usernameTitle, passwordTitle)
 
+	//retrieve icon from files
+	iconFile, err := os.Open("gui/add.png")
+	if err != nil {
+		log.Fatal(err)
+	}
+	r := bufio.NewReader(iconFile)
+	addIcon, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+	addButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("add", addIcon), func() {
+		w := a.NewWindow("Edit Entry")
+		title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
+		title.TextSize = 22
+		service := widget.NewEntry()
+		service.Text = services[0].Text
+		service.PlaceHolder = "Insert the service here"
+		username := widget.NewEntry()
+		username.Text = usernames[0].Text
+		username.PlaceHolder = "Insert your username here"
+		password := widget.NewPasswordEntry()
+		password.PlaceHolder = "Insert your password here"
+		service.Text = services[0].Text
+
+		cancel := widget.NewButton("Cancel", func() {
+			w.Hide()
+		})
+		confirm := widget.NewButton("Confirm", func() {
+			services[0].SetText(service.Text)
+			usernames[0].SetText(username.Text)
+			passwords[0].SetText(password.Text)
+			w.Hide()
+		})
+		w.SetContent(container.NewVBox(
+			title,
+			layout.NewSpacer(),
+			service,
+			layout.NewSpacer(),
+			username,
+			layout.NewSpacer(),
+			password,
+			layout.NewSpacer(),
+			container.NewHBox(
+				cancel,
+				confirm,
+			),
+		))
+		w.Resize(fyne.NewSize(480, 480))
+		w.Show()
+	})
+
 	//call the retrieve data function to pick data from the file
-	retrieveData()
+	retrieveData(a, w)
 
 	//set content and run
 	w.SetContent(
@@ -117,7 +173,7 @@ func Call() {
 			title,
 			description,
 			spacer,
-			container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle),
+			container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle, layout.NewSpacer(), addButton),
 			container.NewAdaptiveGrid(5, services[0], usernames[0], passwords[0], edits[0], copies[0]),
 			spacer,
 		),
@@ -134,14 +190,51 @@ func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 	}
 }
 
-func retrieveData() {
+func retrieveData(a fyne.App, w fyne.Window) {
 	//for i := 0; i < len(services); i++ {
 	//services[i] = file.Text ...
 	services[0] = widget.NewButton("Minecraft", func() {})
 	usernames[0] = widget.NewButton("tiziobe435", func() {})
 	passwords[0] = widget.NewButton("daudhoasdhd2346°ç*èòpè", func() {})
 	edits[0] = widget.NewButton("Edit", func() {
+		w := a.NewWindow("Edit Entry")
+		title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
+		title.TextSize = 22
+		service := widget.NewEntry()
+		service.Text = services[0].Text
+		service.PlaceHolder = "Insert the service here"
+		username := widget.NewEntry()
+		username.Text = usernames[0].Text
+		username.PlaceHolder = "Insert your username here"
+		password := widget.NewPasswordEntry()
+		password.PlaceHolder = "Insert your password here"
+		service.Text = services[0].Text
 
+		cancel := widget.NewButton("Cancel", func() {
+			w.Hide()
+		})
+		confirm := widget.NewButton("Confirm", func() {
+			services[0].SetText(service.Text)
+			usernames[0].SetText(username.Text)
+			passwords[0].SetText(password.Text)
+			w.Hide()
+		})
+		w.SetContent(container.NewVBox(
+			title,
+			layout.NewSpacer(),
+			service,
+			layout.NewSpacer(),
+			username,
+			layout.NewSpacer(),
+			password,
+			layout.NewSpacer(),
+			container.NewHBox(
+				cancel,
+				confirm,
+			),
+		))
+		w.Resize(fyne.NewSize(480, 480))
+		w.Show()
 	})
 	copies[0] = widget.NewButton("Copy", func() {
 		clipboard.Set(passwords[0].Text)
