@@ -25,13 +25,25 @@ const (
 
 //slices of buttons
 var (
-	services  [99]*widget.Button
-	usernames [99]*widget.Button
-	passwords [99]*widget.Button
-	edits     [99]*widget.Button
-	copies    [99]*widget.Button
+	services  []*widget.Button
+	usernames []*widget.Button
+	passwords []*widget.Button
+	edits     []*widget.Button
+	copies    []*widget.Button
 	//TODO add delete button
 )
+
+type buttonWithID struct {
+	widget.ListItemID
+}
+
+func newButtonWithID(button widget.Button) *buttonWithID {
+	newButton := &buttonWithID{}
+	newButton.ExtendBaseWidget(newButton)
+	newButton.ListItemID = 0
+
+	return newButton
+}
 
 //SetTextSize modifies the text size with a variadic function to make it easier
 func SetTextSize(size float32, text ...*canvas.Text) {
@@ -47,7 +59,6 @@ func Call() {
 	w.SetTitle("Osiris Password Manager")
 
 	//usable variables
-	spacer := layout.NewSpacer()
 	purple := color.RGBA{R: uint8(128), G: uint8(0), B: uint8(128), A: uint8(1)}
 
 	//menu with settings, edit and help
@@ -100,7 +111,7 @@ func Call() {
 	title.TextSize = 34
 	title.TextStyle.Bold = true
 	title.Alignment = fyne.TextAlignCenter
-	description := canvas.NewText("Questo è come funziona il porcodio di password manager blablabla", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
+	description := canvas.NewText("Questo è come funziona il di password manager blablabla", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
 	description.TextSize = 22
 	description.Alignment = fyne.TextAlignCenter
 
@@ -123,31 +134,90 @@ func Call() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	//legend with service canvas etc
+	legend := container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle, layout.NewSpacer())
+	//mainView of the app
+	mainView := container.NewVBox(
+		title,
+		description,
+		layout.NewSpacer(),
+		legend,
+	)
+	//masterview of the app (so that it has a layout.NewSpacer after the last element)
+	masterView := container.NewVSplit(mainView, layout.NewSpacer())
+
 	addButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("add", addIcon), func() {
-		w := a.NewWindow("Edit Entry")
-		title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
+		services = append(services, widget.NewButton("Minecraft", func() {}))
+		usernames = append(usernames, widget.NewButton("tiziobe435", func() {}))
+		passwords = append(passwords, widget.NewButton("daudhoasdhd2346°ç*èòpè", func() {}))
+		edits = append(edits, widget.NewButton("Edit", func() {
+			i := 0
+			w := a.NewWindow("Edit Entry")
+			title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
+			title.TextSize = 22
+			service := widget.NewEntry()
+			service.Text = services[i].Text
+			service.PlaceHolder = "Insert the service here"
+			username := widget.NewEntry()
+			username.Text = usernames[i].Text
+			username.PlaceHolder = "Insert your username here"
+			password := widget.NewPasswordEntry()
+			password.PlaceHolder = "Insert your password here"
+			service.Text = services[i].Text
+
+			cancel := widget.NewButton("Cancel", func() {
+				w.Hide()
+			})
+			confirm := widget.NewButton("Confirm", func() {
+				services[getFreePosition()-1].SetText(service.Text)
+				usernames[getFreePosition()-1].SetText(username.Text)
+				passwords[getFreePosition()-1].SetText(password.Text)
+				w.Hide()
+			})
+			w.SetContent(container.NewVBox(
+				container.NewHBox(layout.NewSpacer(), title, layout.NewSpacer()),
+				layout.NewSpacer(),
+				service,
+				layout.NewSpacer(),
+				username,
+				layout.NewSpacer(),
+				password,
+				layout.NewSpacer(),
+				container.NewHBox(
+					cancel,
+					confirm,
+				),
+			))
+			w.Resize(fyne.NewSize(480, 480))
+			w.CenterOnScreen()
+			w.Show()
+		}))
+		copies = append(copies, widget.NewButton("Copy", func() {
+			clipboard.Set(passwords[getFreePosition()-1].Text)
+		}))
+		w := a.NewWindow("Create new entry")
+		title := canvas.NewText("Create your new entry here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
 		title.TextSize = 22
 		service := widget.NewEntry()
-		service.Text = services[0].Text
 		service.PlaceHolder = "Insert the service here"
 		username := widget.NewEntry()
-		username.Text = usernames[0].Text
 		username.PlaceHolder = "Insert your username here"
 		password := widget.NewPasswordEntry()
 		password.PlaceHolder = "Insert your password here"
-		service.Text = services[0].Text
-
 		cancel := widget.NewButton("Cancel", func() {
 			w.Hide()
 		})
 		confirm := widget.NewButton("Confirm", func() {
-			services[0].SetText(service.Text)
-			usernames[0].SetText(username.Text)
-			passwords[0].SetText(password.Text)
+			services[getFreePosition()-1].SetText(service.Text)
+			usernames[getFreePosition()-1].SetText(username.Text)
+			passwords[getFreePosition()-1].SetText(password.Text)
+			//FIXME sistema in qualche modo sto errore
+			updateView(mainView)
 			w.Hide()
 		})
 		w.SetContent(container.NewVBox(
-			title,
+			container.NewHBox(layout.NewSpacer(), title, layout.NewSpacer()),
 			layout.NewSpacer(),
 			service,
 			layout.NewSpacer(),
@@ -161,22 +231,18 @@ func Call() {
 			),
 		))
 		w.Resize(fyne.NewSize(480, 480))
+		w.CenterOnScreen()
 		w.Show()
 	})
 
 	//call the retrieve data function to pick data from the file
-	retrieveData(a, w)
+	//retrieveData(a, w)
+	legend.Add(addButton)
+	//updateView(mainView)
 
 	//set content and run
 	w.SetContent(
-		container.NewVBox(
-			title,
-			description,
-			spacer,
-			container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle, layout.NewSpacer(), addButton),
-			container.NewAdaptiveGrid(5, services[0], usernames[0], passwords[0], edits[0], copies[0]),
-			spacer,
-		),
+		masterView,
 	)
 	w.Resize(fyne.NewSize(width, heigth))
 	w.CenterOnScreen()
@@ -190,54 +256,64 @@ func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 	}
 }
 
-func retrieveData(a fyne.App, w fyne.Window) {
-	//for i := 0; i < len(services); i++ {
-	//services[i] = file.Text ...
-	services[0] = widget.NewButton("Minecraft", func() {})
-	usernames[0] = widget.NewButton("tiziobe435", func() {})
-	passwords[0] = widget.NewButton("daudhoasdhd2346°ç*èòpè", func() {})
-	edits[0] = widget.NewButton("Edit", func() {
-		w := a.NewWindow("Edit Entry")
-		title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
-		title.TextSize = 22
-		service := widget.NewEntry()
-		service.Text = services[0].Text
-		service.PlaceHolder = "Insert the service here"
-		username := widget.NewEntry()
-		username.Text = usernames[0].Text
-		username.PlaceHolder = "Insert your username here"
-		password := widget.NewPasswordEntry()
-		password.PlaceHolder = "Insert your password here"
-		service.Text = services[0].Text
+// func retrieveData(a fyne.App, w fyne.Window) {
+// 	//for i := 0; i < len(services); i++ {
+// 	//services[i] = file.Text ...
+// 	services = append(services, widget.NewButton("Minecraft", func() {}))
+// 	usernames = append(usernames, widget.NewButton("tiziobe435", func() {}))
+// 	passwords = append(passwords, widget.NewButton("daudhoasdhd2346°ç*èòpè", func() {}))
+// 	edits = append(edits, widget.NewButton("Edit", func() {
+// 		w := a.NewWindow("Edit Entry")
+// 		title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
+// 		title.TextSize = 22
+// 		service := widget.NewEntry()
+// 		service.Text = services[getFreePosition()-1].Text
+// 		service.PlaceHolder = "Insert the service here"
+// 		username := widget.NewEntry()
+// 		username.Text = usernames[getFreePosition()-1].Text
+// 		username.PlaceHolder = "Insert your username here"
+// 		password := widget.NewPasswordEntry()
+// 		password.PlaceHolder = "Insert your password here"
+// 		service.Text = services[getFreePosition()-1].Text
 
-		cancel := widget.NewButton("Cancel", func() {
-			w.Hide()
-		})
-		confirm := widget.NewButton("Confirm", func() {
-			services[0].SetText(service.Text)
-			usernames[0].SetText(username.Text)
-			passwords[0].SetText(password.Text)
-			w.Hide()
-		})
-		w.SetContent(container.NewVBox(
-			title,
-			layout.NewSpacer(),
-			service,
-			layout.NewSpacer(),
-			username,
-			layout.NewSpacer(),
-			password,
-			layout.NewSpacer(),
-			container.NewHBox(
-				cancel,
-				confirm,
-			),
-		))
-		w.Resize(fyne.NewSize(480, 480))
-		w.Show()
-	})
-	copies[0] = widget.NewButton("Copy", func() {
-		clipboard.Set(passwords[0].Text)
-	})
-	//}
+// 		cancel := widget.NewButton("Cancel", func() {
+// 			w.Hide()
+// 		})
+// 		confirm := widget.NewButton("Confirm", func() {
+// 			services[getFreePosition()-1].SetText(service.Text)
+// 			usernames[getFreePosition()-1].SetText(username.Text)
+// 			passwords[getFreePosition()-1].SetText(password.Text)
+// 			w.Hide()
+// 		})
+// 		w.SetContent(container.NewVBox(
+// 			container.NewHBox(layout.NewSpacer(), title, layout.NewSpacer()),
+// 			layout.NewSpacer(),
+// 			service,
+// 			layout.NewSpacer(),
+// 			username,
+// 			layout.NewSpacer(),
+// 			password,
+// 			layout.NewSpacer(),
+// 			container.NewHBox(
+// 				cancel,
+// 				confirm,
+// 			),
+// 		))
+// 		w.Resize(fyne.NewSize(480, 480))
+// 		w.CenterOnScreen()
+// 		w.Show()
+// 	}))
+// 	copies = append(copies, widget.NewButton("Copy", func() {
+// 		clipboard.Set(passwords[getFreePosition()].Text)
+// 	}))
+// 	//}
+// }
+
+func getFreePosition() int {
+	return len(services)
+}
+
+func updateView(mainView *fyne.Container) {
+	mainView.Add(container.NewAdaptiveGrid(5, services[len(services)-1], usernames[len(services)-1], passwords[len(services)-1], edits[len(services)-1], copies[len(services)-1]))
+
 }
