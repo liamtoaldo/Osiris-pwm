@@ -8,6 +8,7 @@ import (
 	"net/url"
 	"os"
 
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
@@ -58,6 +59,7 @@ func Call() {
 		w.SetContent(settings.NewSettings().LoadAppearanceScreen(w))
 		w.Resize(fyne.NewSize(480, 480))
 		w.Show()
+		dialog.ShowInformation("Message to the end user", "The colors only apply at the restart of the application", w)
 	})
 	cutItem := fyne.NewMenuItem("Cut", func() {
 		shortcutFocused(&fyne.ShortcutCut{
