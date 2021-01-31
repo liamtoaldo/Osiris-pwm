@@ -15,7 +15,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
-	"github.com/d-tsuji/clipboard"
+	//"github.com/d-tsuji/clipboard"
 )
 
 const (
@@ -25,25 +25,13 @@ const (
 
 //slices of buttons
 var (
-	services  []*widget.Button
-	usernames []*widget.Button
-	passwords []*widget.Button
-	edits     []*widget.Button
-	copies    []*widget.Button
+	services  []*widget.Entry
+	usernames []*widget.Entry
+	passwords []*widget.Entry
+
+	isLocked bool = false
 	//TODO add delete button
 )
-
-type buttonWithID struct {
-	widget.ListItemID
-}
-
-func newButtonWithID(button widget.Button) *buttonWithID {
-	newButton := &buttonWithID{}
-	newButton.ExtendBaseWidget(newButton)
-	newButton.ListItemID = 0
-
-	return newButton
-}
 
 //SetTextSize modifies the text size with a variadic function to make it easier
 func SetTextSize(size float32, text ...*canvas.Text) {
@@ -124,19 +112,9 @@ func Call() {
 	passwordTitle.Alignment = fyne.TextAlignCenter
 	SetTextSize(20, serviceTitle, usernameTitle, passwordTitle)
 
-	//retrieve icon from files
-	iconFile, err := os.Open("gui/add.png")
-	if err != nil {
-		log.Fatal(err)
-	}
-	r := bufio.NewReader(iconFile)
-	addIcon, err := ioutil.ReadAll(r)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	//legend with service canvas etc
-	legend := container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle, layout.NewSpacer())
+	lock := widget.NewButtonWithIcon("Block entries", fyne.NewStaticResource("lock", getIcon("gui/lock.png")), func() { handleAllLocks() })
+	legend := container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle, lock)
 	//mainView of the app
 	mainView := container.NewVBox(
 		title,
@@ -145,57 +123,12 @@ func Call() {
 		legend,
 	)
 	//masterview of the app (so that it has a layout.NewSpacer after the last element)
-	masterView := container.NewVSplit(mainView, layout.NewSpacer())
+	masterView := container.NewVSplit(container.NewVScroll(mainView), layout.NewSpacer())
 
-	addButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("add", addIcon), func() {
-		services = append(services, widget.NewButton("Minecraft", func() {}))
-		usernames = append(usernames, widget.NewButton("tiziobe435", func() {}))
-		passwords = append(passwords, widget.NewButton("daudhoasdhd2346°ç*èòpè", func() {}))
-		edits = append(edits, widget.NewButton("Edit", func() {
-			i := 0
-			w := a.NewWindow("Edit Entry")
-			title := canvas.NewText("Edit your values here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
-			title.TextSize = 22
-			service := widget.NewEntry()
-			service.Text = services[i].Text
-			service.PlaceHolder = "Insert the service here"
-			username := widget.NewEntry()
-			username.Text = usernames[i].Text
-			username.PlaceHolder = "Insert your username here"
-			password := widget.NewPasswordEntry()
-			password.PlaceHolder = "Insert your password here"
-			service.Text = services[i].Text
-
-			cancel := widget.NewButton("Cancel", func() {
-				w.Hide()
-			})
-			confirm := widget.NewButton("Confirm", func() {
-				services[getFreePosition()-1].SetText(service.Text)
-				usernames[getFreePosition()-1].SetText(username.Text)
-				passwords[getFreePosition()-1].SetText(password.Text)
-				w.Hide()
-			})
-			w.SetContent(container.NewVBox(
-				container.NewHBox(layout.NewSpacer(), title, layout.NewSpacer()),
-				layout.NewSpacer(),
-				service,
-				layout.NewSpacer(),
-				username,
-				layout.NewSpacer(),
-				password,
-				layout.NewSpacer(),
-				container.NewHBox(
-					cancel,
-					confirm,
-				),
-			))
-			w.Resize(fyne.NewSize(480, 480))
-			w.CenterOnScreen()
-			w.Show()
-		}))
-		copies = append(copies, widget.NewButton("Copy", func() {
-			clipboard.Set(passwords[getFreePosition()-1].Text)
-		}))
+	addButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("add", getIcon("gui/add.png")), func() {
+		services = append(services, widget.NewEntry())
+		usernames = append(usernames, widget.NewEntry())
+		passwords = append(passwords, widget.NewEntry())
 		w := a.NewWindow("Create new entry")
 		title := canvas.NewText("Create your new entry here", color.RGBA{R: uint8(80), G: uint8(0), B: uint8(128), A: uint8(1)})
 		title.TextSize = 22
@@ -212,7 +145,9 @@ func Call() {
 			services[getFreePosition()-1].SetText(service.Text)
 			usernames[getFreePosition()-1].SetText(username.Text)
 			passwords[getFreePosition()-1].SetText(password.Text)
-			//FIXME sistema in qualche modo sto errore
+			handleLock(services[getFreePosition()-1],
+				usernames[getFreePosition()-1], passwords[getFreePosition()-1])
+
 			updateView(mainView)
 			w.Hide()
 		})
@@ -314,6 +249,58 @@ func getFreePosition() int {
 }
 
 func updateView(mainView *fyne.Container) {
-	mainView.Add(container.NewAdaptiveGrid(5, services[len(services)-1], usernames[len(services)-1], passwords[len(services)-1], edits[len(services)-1], copies[len(services)-1]))
+	mainView.Add(container.NewAdaptiveGrid(5, services[len(services)-1], usernames[len(services)-1], passwords[len(services)-1]))
 
+}
+
+func getIcon(path string) []byte {
+	iconFile, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	r := bufio.NewReader(iconFile)
+	Icon, err := ioutil.ReadAll(r)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return Icon
+}
+
+func handleAllLocks() {
+	if isLocked {
+		for _, x := range services {
+			x.Enable()
+		}
+		for _, x := range usernames {
+			x.Enable()
+		}
+		for _, x := range passwords {
+			x.Enable()
+		}
+		isLocked = false
+		return
+	}
+	for _, x := range services {
+		x.Disable()
+	}
+	for _, x := range usernames {
+		x.Disable()
+
+	}
+	for _, x := range passwords {
+		x.Disable()
+	}
+	isLocked = true
+}
+
+func handleLock(service *widget.Entry, username *widget.Entry, password *widget.Entry) {
+	if isLocked {
+		service.Disable()
+		username.Disable()
+		password.Disable()
+		return
+	}
+	service.Enable()
+	username.Enable()
+	password.Enable()
 }
