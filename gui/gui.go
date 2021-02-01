@@ -1,19 +1,21 @@
 package gui
 
 import (
+	"Osiris-pwm/crypt"
 	"bufio"
+
 	//"image/color"
 	"io/ioutil"
 	"log"
 	"net/url"
 	"os"
 
-	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/cmd/fyne_settings/settings"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
@@ -184,8 +186,8 @@ func Call() {
 	//call the retrieve data function to pick data from the file
 	//retrieveData(a, w)
 	legend.Add(addButton)
-	//updateView(mainView)
 
+	toSHandler(a, w)
 	//set content and run
 	w.SetContent(
 		masterView,
@@ -278,4 +280,32 @@ func remove(slice []*fyne.Container, s int) []*fyne.Container {
 		slice = slice[:len(slice)-1]
 	}
 	return slice
+}
+
+func toSHandler(a fyne.App, w fyne.Window) {
+	//show dialog which says to accept terms of service
+	data, err := ioutil.ReadFile("data/termsAccepted.txt")
+	if err != nil {
+		println("File reading error", err)
+		return
+	}
+
+	if string(data) == "" {
+		agreement := dialog.NewConfirm("Terms of Service", "Osiris password manager is provided as is and without guarantees of any kind,\n by accepting you confirm that I, Gyro7, take no responsibilities on your data\n and I am not going to help you in case of lost/stolen data\n", func(accepted bool) {
+			if accepted == true {
+				f := "data/termsAccepted.txt"
+				crypt.EncryptStringInFile(crypt.GetToSKey(), "true", f)
+			} else {
+				os.Remove("data/termsAccepted.txt")
+				err, _ := os.Create("data/termsAccepted.txt")
+				a.Quit()
+				if err != nil {
+					println(err)
+				}
+			}
+		}, w)
+		agreement.SetConfirmText("I agree")
+		agreement.SetDismissText("No, close the app")
+		agreement.Show()
+	}
 }
