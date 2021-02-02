@@ -1,11 +1,12 @@
 package main
 
 import (
-	_ "fmt"
-
+	"Osiris-pwm/crypt"
 	gui "Osiris-pwm/gui"
+	_ "fmt"
 )
 
 func main() {
 	gui.Call()
+	println(crypt.GenerateKey())
 }
