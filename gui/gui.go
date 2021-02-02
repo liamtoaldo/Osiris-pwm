@@ -19,7 +19,9 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	//"github.com/d-tsuji/clipboard"
+
+	//"github.com/atotto/clipboard"
+	"github.com/d-tsuji/clipboard"
 )
 
 const (
@@ -160,9 +162,9 @@ func Call() {
 			services[getFreePosition()-1].SetText(service.Text)
 			usernames[getFreePosition()-1].SetText(username.Text)
 			passwords[getFreePosition()-1].SetText(password.Text)
-			updateView(mainView, true, len(services)-1)
 			handleLock(services[getFreePosition()-1], usernames[getFreePosition()-1], passwords[getFreePosition()-1])
 			w.Hide()
+			updateView(mainView, true, len(services)-1)
 		})
 		w.SetContent(container.NewVBox(
 			container.NewHBox(layout.NewSpacer(), title, layout.NewSpacer()),
@@ -187,6 +189,7 @@ func Call() {
 	//retrieveData(a, w)
 	legend.Add(addButton)
 
+	keyHandler(a, w)
 	toSHandler(a, w)
 	//set content and run
 	w.SetContent(
@@ -216,7 +219,9 @@ func getFreePosition() int {
 func updateView(mainView *fyne.Container, add bool, i int) {
 	if add {
 		grids = append(grids, container.NewAdaptiveGrid(5, services[i], usernames[i], passwords[i]))
-		mainView.Add(grids[i])
+
+		//FIXME Sometimes, you need to move the cursor over the black split line in order for the grid to get added to the view
+		go mainView.Add(grids[i])
 	} else {
 		mainView.Remove(grids[i])
 	}
@@ -286,18 +291,17 @@ func toSHandler(a fyne.App, w fyne.Window) {
 	//show dialog which says to accept terms of service
 	data, err := ioutil.ReadFile("data/termsAccepted.txt")
 	if err != nil {
-		println("File reading error", err)
-		return
+		os.Create("data/termsAccepted.txt")
+		data, err = ioutil.ReadFile("data/termsAccepted.txt")
 	}
 
 	if string(data) == "" {
 		agreement := dialog.NewConfirm("Terms of Service", "Osiris password manager is provided as is and without guarantees of any kind,\n by accepting you confirm that I, Gyro7, take no responsibilities on your data\n and I am not going to help you in case of lost/stolen data\n", func(accepted bool) {
+			f := "data/termsAccepted.txt"
 			if accepted == true {
-				f := "data/termsAccepted.txt"
 				crypt.EncryptStringInFile(crypt.GetToSKey(), "true", f)
 			} else {
-				os.Remove("data/termsAccepted.txt")
-				err, _ := os.Create("data/termsAccepted.txt")
+				os.Remove(f)
 				a.Quit()
 				if err != nil {
 					println(err)
@@ -308,4 +312,50 @@ func toSHandler(a fyne.App, w fyne.Window) {
 		agreement.SetDismissText("No, close the app")
 		agreement.Show()
 	}
+}
+
+func keyHandler(a fyne.App, w fyne.Window) {
+	//show dialog which says to insert the key
+	data, err := ioutil.ReadFile("data/keyShown.txt")
+	if err != nil {
+		os.Create("data/keyShown.txt")
+		data, err = ioutil.ReadFile("data/keyShown.txt")
+	}
+
+	keyLabel := canvas.NewText("", theme.PrimaryColor())
+	keyLabel.Text = crypt.GenerateKey()
+	keyLabel.TextStyle.Monospace = true
+	keyLabel.Alignment = fyne.TextAlignCenter
+
+	//code to handle the autoCompletion file
+	autoCompletion := widget.NewRadioGroup([]string{"Enable Auto-Completion", "Don't enable it"}, func(choice string) {
+		f := "data/autoCompletion.txt"
+		if choice == "Enable Auto-Completion" {
+			//at every change recreate and rewrite the file to avoid the file being full of unused data
+			os.Create(f)
+			crypt.EncryptStringInFile(crypt.GetToSKey(), "true", f)
+		} else {
+			os.Remove(f)
+		}
+	})
+
+	//code to handle the keyShown file
+	if string(data) == "" {
+		showkey := dialog.NewCustomConfirm(" Here is your key, copy it and save it somewhere, because you'll be asked it \n every time you open Osiris if you don't enable auto-completion.", "Confirm", "Cancel", container.NewVBox(keyLabel, widget.NewButtonWithIcon("Copy", theme.ContentCopyIcon(), func() {
+			clipboard.Set((keyLabel.Text))
+		}), autoCompletion), func(accepted bool) {
+			f := "data/keyShown.txt"
+			if accepted {
+				crypt.EncryptStringInFile(crypt.GetToSKey(), "true", f)
+			} else {
+				os.Remove(f)
+				a.Quit()
+				if err != nil {
+					println(err)
+				}
+			}
+		}, w)
+		showkey.Show()
+	}
+
 }
