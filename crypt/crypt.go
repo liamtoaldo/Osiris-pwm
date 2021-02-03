@@ -24,7 +24,7 @@ func GenerateKey() string {
 	return string(b)
 }
 
-//GetToSKey is a function that returns the global key for the terms of service text file
+//GetToSKey is a function that returns the global key for the settings files
 func GetToSKey() []byte { return []byte("TkQTu6t7rWmBFS2ZmAzX6YTfpz-evVmW") }
 
 //EncryptStringInFile encrypts a string given the key and the file
@@ -86,3 +86,6 @@ func DecryptStringFromFile(key []byte, file string) string {
 
 	return string(plaintext)
 }
+
+//GetGlobalKey returns the global key that encrypts and decrypts the global
+func GetGlobalKey() []byte { return []byte("q1ozLRcb3YrlpvxZqUE7LviP5MFwnT5w") }
