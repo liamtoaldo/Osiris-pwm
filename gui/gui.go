@@ -39,13 +39,6 @@ var (
 	isLocked bool = false
 )
 
-//SetTextSize modifies the text size with a variadic function to make it easier
-func SetTextSize(size float32, text ...*canvas.Text) {
-	for i := 0; i < len(text); i++ {
-		text[i].TextSize = size
-	}
-}
-
 //Call calls the main gui application
 func Call() {
 	a := app.New()
@@ -127,7 +120,7 @@ func Call() {
 	usernameTitle.Alignment = fyne.TextAlignCenter
 	passwordTitle := canvas.NewText("Passwords", mainColor)
 	passwordTitle.Alignment = fyne.TextAlignCenter
-	SetTextSize(20, serviceTitle, usernameTitle, passwordTitle)
+	setTextSize(20, serviceTitle, usernameTitle, passwordTitle)
 
 	//legend with service canvas etc
 	lock := widget.NewButtonWithIcon("Block entries", fyne.NewStaticResource("lock", getIcon("gui/lock.png")), func() { handleAllLocks() })
@@ -189,6 +182,7 @@ func Call() {
 	//retrieveData(a, w)
 	legend.Add(addButton)
 
+	loginHandler(a, w)
 	keyHandler(a, w)
 	toSHandler(a, w)
 	//set content and run
@@ -204,6 +198,13 @@ func Call() {
 func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 	if focused, ok := w.Canvas().Focused().(fyne.Shortcutable); ok {
 		focused.TypedShortcut(s)
+	}
+}
+
+//SetTextSize modifies the text size with a variadic function to make it easier
+func setTextSize(size float32, text ...*canvas.Text) {
+	for i := 0; i < len(text); i++ {
+		text[i].TextSize = size
 	}
 }
 
@@ -241,30 +242,28 @@ func getIcon(path string) []byte {
 	return Icon
 }
 
+func enableDisableAll(items []*widget.Entry, enable bool) {
+	if enable {
+		for _, x := range items {
+			x.Enable()
+		}
+	} else {
+		for _, x := range items {
+			x.Disable()
+		}
+	}
+}
 func handleAllLocks() {
 	if isLocked {
-		for _, x := range services {
-			x.Enable()
-		}
-		for _, x := range usernames {
-			x.Enable()
-		}
-		for _, x := range passwords {
-			x.Enable()
-		}
+		enableDisableAll(services, true)
+		enableDisableAll(usernames, true)
+		enableDisableAll(passwords, true)
 		isLocked = false
 		return
 	}
-	for _, x := range services {
-		x.Disable()
-	}
-	for _, x := range usernames {
-		x.Disable()
-
-	}
-	for _, x := range passwords {
-		x.Disable()
-	}
+	enableDisableAll(services, false)
+	enableDisableAll(usernames, false)
+	enableDisableAll(passwords, false)
 	isLocked = true
 }
 
@@ -315,7 +314,7 @@ func toSHandler(a fyne.App, w fyne.Window) {
 }
 
 func keyHandler(a fyne.App, w fyne.Window) {
-	//show dialog which says to insert the key
+	//show dialog which shows the key (only for the first time)
 	data, err := ioutil.ReadFile("data/keyShown.txt")
 	if err != nil {
 		os.Create("data/keyShown.txt")
@@ -347,6 +346,8 @@ func keyHandler(a fyne.App, w fyne.Window) {
 			f := "data/keyShown.txt"
 			if accepted {
 				crypt.EncryptStringInFile(crypt.GetToSKey(), "true", f)
+				os.Create("data/masterKey.txt")
+				crypt.EncryptStringInFile(crypt.GetGlobalKey(), keyLabel.Text, "data/masterKey.txt")
 			} else {
 				os.Remove(f)
 				a.Quit()
@@ -357,5 +358,61 @@ func keyHandler(a fyne.App, w fyne.Window) {
 		}, w)
 		showkey.Show()
 	}
+}
 
+func loginHandler(a fyne.App, w fyne.Window) {
+	//checks if it is the first time the application is opened and returns, because I don't want the user to write the key the first time he enters in the application
+	tmp, err := ioutil.ReadFile("data/keyShown.txt")
+	if err != nil || string(tmp) == "" {
+		return
+	}
+
+	_, err = ioutil.ReadFile("data/masterKey.txt")
+	if err != nil {
+		os.Create("data/masterKey.txt")
+		crypt.EncryptStringInFile(crypt.GetGlobalKey(), "nonzo", "data/masterKey.txt")
+	}
+	KEY := crypt.DecryptStringFromFile(crypt.GetGlobalKey(), "data/masterKey.txt")
+	//show dialog which says to accept terms of service
+	data, err := ioutil.ReadFile("data/autoCompletion.txt")
+	if err != nil {
+		os.Create("data/autoCompletion.txt")
+		data, err = ioutil.ReadFile("data/autoCompletion.txt")
+	}
+	//the entry for the key in the dialog interface
+	keyEntry := widget.NewPasswordEntry()
+
+	//what happens if the auto completion is not enabled
+	if string(data) == "" {
+		agreement := dialog.NewCustomConfirm("  Authentication - Insert your given key here  ", "Confirm", "Cancel", keyEntry, func(confirmed bool) {
+			if !confirmed {
+				a.Quit()
+			}
+		}, w)
+
+		agreement.Show()
+		agreement.SetOnClosed(func() {
+			if keyEntry.Text != KEY {
+				agreement.Show()
+			}
+		})
+	}
+
+	//what happens if the auto completion is enabled
+	if string(data) != "" {
+		//autocomplete the entry with the key
+		keyEntry.Text = KEY
+		agreement := dialog.NewCustomConfirm("  Authentication - Insert your given key here  ", "Confirm", "Cancel", keyEntry, func(confirmed bool) {
+			if !confirmed {
+				a.Quit()
+			}
+		}, w)
+
+		agreement.Show()
+		agreement.SetOnClosed(func() {
+			if keyEntry.Text != KEY {
+				agreement.Show()
+			}
+		})
+	}
 }
