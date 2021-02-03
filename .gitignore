@@ -15,3 +15,6 @@
 # vendor/
 Osiris-pwm
 data/termsAccepted.txt
+data/autoCompletion.txt
+data/keyShown.txt
+data/masterKey.txt
