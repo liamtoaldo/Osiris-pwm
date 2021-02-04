@@ -3,6 +3,8 @@ package gui
 import (
 	"Osiris-pwm/crypt"
 	"bufio"
+	"fmt"
+	"strings"
 
 	//"image/color"
 	"io/ioutil"
@@ -155,6 +157,8 @@ func Call() {
 			services[getFreePosition()-1].SetText(service.Text)
 			usernames[getFreePosition()-1].SetText(username.Text)
 			passwords[getFreePosition()-1].SetText(password.Text)
+			saveData(service.Text, username.Text, password.Text)
+
 			handleLock(services[getFreePosition()-1], usernames[getFreePosition()-1], passwords[getFreePosition()-1])
 			w.Hide()
 			updateView(mainView, true, len(services)-1)
@@ -180,11 +184,13 @@ func Call() {
 
 	//call the retrieve data function to pick data from the file
 	//retrieveData(a, w)
+
 	legend.Add(addButton)
 
 	loginHandler(a, w)
 	keyHandler(a, w)
 	toSHandler(a, w)
+	retrieveData(a, w, mainView)
 	//set content and run
 	w.SetContent(
 		masterView,
@@ -360,6 +366,7 @@ func keyHandler(a fyne.App, w fyne.Window) {
 	}
 }
 
+//handle the login with the key at the start of the application
 func loginHandler(a fyne.App, w fyne.Window) {
 	//checks if it is the first time the application is opened and returns, because I don't want the user to write the key the first time he enters in the application
 	tmp, err := ioutil.ReadFile("data/keyShown.txt")
@@ -370,7 +377,6 @@ func loginHandler(a fyne.App, w fyne.Window) {
 	_, err = ioutil.ReadFile("data/masterKey.txt")
 	if err != nil {
 		os.Create("data/masterKey.txt")
-		crypt.EncryptStringInFile(crypt.GetGlobalKey(), "nonzo", "data/masterKey.txt")
 	}
 	KEY := crypt.DecryptStringFromFile(crypt.GetGlobalKey(), "data/masterKey.txt")
 	//show dialog which says to accept terms of service
@@ -409,10 +415,43 @@ func loginHandler(a fyne.App, w fyne.Window) {
 		}, w)
 
 		agreement.Show()
+		//if the user tries to close the application but the key is incorrect this will continue forever
 		agreement.SetOnClosed(func() {
 			if keyEntry.Text != KEY {
 				agreement.Show()
 			}
 		})
 	}
+}
+
+//get the files where the user's data is written and return the decrypted key
+func getDataFiles() string {
+	_, err := ioutil.ReadFile("data/DATA.txt")
+	if err != nil {
+		os.Create("data/DATA.txt")
+	}
+
+	key := crypt.DecryptStringFromFile(crypt.GetGlobalKey(), "data/masterKey.txt")
+	return key
+}
+
+//saves and encrypt the data in the text file
+func saveData(service string, username string, password string) {
+	key := getDataFiles()
+	crypt.EncryptStringInFile([]byte(key), fmt.Sprintf("%s:%s:%s", service, username, password), "data/DATA.txt")
+}
+
+func retrieveData(a fyne.App, w fyne.Window, mainView *fyne.Container) {
+	key := getDataFiles()
+	data := strings.Split(crypt.DecryptStringFromFile([]byte(key), "data/DATA.txt"), ":")
+	services = append(services, widget.NewEntry())
+	usernames = append(usernames, widget.NewEntry())
+	passwords = append(passwords, widget.NewEntry())
+	for i := 0; i < len(data)-2; i++ {
+		services[getFreePosition()-1].SetText(data[i])
+		usernames[getFreePosition()-1].SetText(data[i+1])
+		passwords[getFreePosition()-1].SetText(data[i+2])
+		updateView(mainView, true, i)
+	}
+
 }
