@@ -190,7 +190,8 @@ func Call() {
 	loginHandler(a, w)
 	keyHandler(a, w)
 	toSHandler(a, w)
-	retrieveData(a, w, mainView)
+	//TODO fare che se non c'è nulla scritto nel file data parte lo stesso
+	retrieveData(mainView)
 	//set content and run
 	w.SetContent(
 		masterView,
@@ -426,10 +427,10 @@ func loginHandler(a fyne.App, w fyne.Window) {
 
 //get the files where the user's data is written and return the decrypted key
 func getDataFiles() string {
-	_, err := ioutil.ReadFile("data/DATA.txt")
-	if err != nil {
-		os.Create("data/DATA.txt")
-	}
+	// _, err := ioutil.ReadFile("data/DATA")
+	// if err != nil {
+	// 	os.Create("data/DATA")
+	// }
 
 	key := crypt.DecryptStringFromFile(crypt.GetGlobalKey(), "data/masterKey.txt")
 	return key
@@ -438,20 +439,31 @@ func getDataFiles() string {
 //saves and encrypt the data in the text file
 func saveData(service string, username string, password string) {
 	key := getDataFiles()
-	crypt.EncryptStringInFile([]byte(key), fmt.Sprintf("%s:%s:%s", service, username, password), "data/DATA.txt")
+	crypt.EncryptDataStringInFile([]byte(key), fmt.Sprintf("%s:%s:%s", service, username, password), "data/DATA")
 }
 
-func retrieveData(a fyne.App, w fyne.Window, mainView *fyne.Container) {
-	key := getDataFiles()
-	data := strings.Split(crypt.DecryptStringFromFile([]byte(key), "data/DATA.txt"), ":")
-	services = append(services, widget.NewEntry())
-	usernames = append(usernames, widget.NewEntry())
-	passwords = append(passwords, widget.NewEntry())
-	for i := 0; i < len(data)-2; i++ {
-		services[getFreePosition()-1].SetText(data[i])
-		usernames[getFreePosition()-1].SetText(data[i+1])
-		passwords[getFreePosition()-1].SetText(data[i+2])
-		updateView(mainView, true, i)
+func retrieveData(mainView *fyne.Container) {
+	//checks if it is the first time the application is opened and returns, because I don't want the user to write the key the first time he enters in the application
+	tmp, err := ioutil.ReadFile("data/masterKey.txt")
+	if err != nil || string(tmp) == "" {
+		return
 	}
-
+	key := getDataFiles()
+	file := "data/DATA"
+	for i := 0; i < 999; i++ {
+		file += fmt.Sprint(i)
+		if _, err := os.Stat(file); os.IsNotExist(err) {
+			break
+		}
+		data := strings.Split(crypt.DecryptDataStringFromFile([]byte(key), file), ":")
+		services = append(services, widget.NewEntry())
+		usernames = append(usernames, widget.NewEntry())
+		passwords = append(passwords, widget.NewEntry())
+		for j := 0; j < len(data)-2; j++ {
+			services[getFreePosition()-1].SetText(data[j])
+			usernames[getFreePosition()-1].SetText(data[j+1])
+			passwords[getFreePosition()-1].SetText(data[j+2])
+			updateView(mainView, true, i)
+		}
+	}
 }
