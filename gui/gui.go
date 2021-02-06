@@ -46,6 +46,9 @@ func Call() {
 	a := app.New()
 	w := a.NewWindow("Osiris Password Manager")
 	w.SetTitle("Osiris Password Manager")
+	icon := getIcon("gui/logo.png")
+	a.SetIcon(fyne.NewStaticResource("icon", icon))
+	w.SetIcon(fyne.NewStaticResource("icon", icon))
 
 	//usable variables
 	//mainColor := color.RGBA{R: uint8(128), G: uint8(0), B: uint8(128), A: uint8(1)}
