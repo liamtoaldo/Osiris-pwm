@@ -1,11 +1,12 @@
 package main
 
 import (
-	gui "Osiris-pwm/gui"
+	"Osiris-pwm/gui"
 	_ "fmt"
 )
 
 func main() {
-	//commit
+	//call the main gui and run it
 	gui.Call()
 }
+
