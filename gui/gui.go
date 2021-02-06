@@ -76,12 +76,29 @@ func Call() {
 		}, w)
 	})
 	deleteItem := fyne.NewMenuItem("Delete empties", func() {
+		file := "data/DATA"
 		for i := 0; i < len(grids); i++ {
+			file += fmt.Sprint(i)
 			if services[i].Text == "" && usernames[i].Text == "" && passwords[i].Text == "" {
 				updateView(mainView, false, i)
+				os.Remove(file)
+				tmp := file
+				//rename the files progressively (eg DATA012 gets deleted, DATA0123 becomes DATA012 and so on)
+				for j := i; j < len(grids)+i; j++ {
+					file = tmp
+					tmp += fmt.Sprint(j + 1)
+					if _, err := os.Stat(file); os.IsNotExist(err) {
+						err = os.Rename(tmp, file)
+						if err != nil {
+							fmt.Println(err)
+						}
+					}
+				}
 			}
 		}
 	})
+	//scorri tutti file
+
 	helpMenu := fyne.NewMenu("Help",
 		fyne.NewMenuItem("Documentation", func() {
 			u, _ := url.Parse("https://github.com/Gyro7/Osiris-pwm")
@@ -106,14 +123,25 @@ func Call() {
 	w.SetMaster()
 
 	//title and description
+	logo := canvas.NewImageFromFile("gui/logo.png")
+	logo.ScaleMode = canvas.ImageScaleFastest
+	logo.FillMode = canvas.ImageFillOriginal
 	title := canvas.NewText("Osiris Password Manager", theme.PrimaryColor())
 	title.TextSize = 34
 	title.TextStyle.Bold = true
 	title.Alignment = fyne.TextAlignCenter
-	description := canvas.NewText("Questo è come funziona il di password manager blablabla", theme.PrimaryColor())
-	description.TextSize = 22
-	description.Alignment = fyne.TextAlignCenter
-	description.TextStyle = fyne.TextStyle{Italic: true}
+	description := [6]*canvas.Text{}
+	description[0] = canvas.NewText("This is the first version of Osiris, it may be a bit buggy.", theme.PrimaryColor())
+	description[1] = canvas.NewText("To add a new element, click the add button below", theme.PrimaryColor())
+	description[2] = canvas.NewText("To delete an element, just edit it so that all its entries (service, username, password) are empty and", theme.PrimaryColor())
+	description[3] = canvas.NewText("then head to the Edit Menu and click \"Delete Empties\"", theme.PrimaryColor())
+	description[4] = canvas.NewText("In this version, the edits you make to already existing entries won't apply at the restart because of a bug in the library", theme.PrimaryColor())
+	description[5] = canvas.NewText("REMEMBER: NEVER delete the data files or you will probably lose your data", theme.PrimaryColor())
+	for _, x := range description {
+		x.TextSize = 18
+		x.Alignment = fyne.TextAlignCenter
+		x.TextStyle = fyne.TextStyle{Italic: true}
+	}
 
 	//table with usernames, values and passwords
 	serviceTitle := canvas.NewText("Services", mainColor)
@@ -129,8 +157,13 @@ func Call() {
 	legend := container.NewAdaptiveGrid(5, serviceTitle, usernameTitle, passwordTitle, lock)
 	//mainView of the app
 	mainView = container.NewVBox(
-		title,
-		description,
+		container.NewCenter(container.NewHBox(logo, title)),
+		description[0],
+		description[1],
+		description[2],
+		description[3],
+		description[4],
+		description[5],
 		layout.NewSpacer(),
 		legend,
 	)
@@ -187,11 +220,13 @@ func Call() {
 
 	legend.Add(addButton)
 
+	//handle the login after the key and the ToS
 	loginHandler(a, w)
 	keyHandler(a, w)
 	toSHandler(a, w)
-	//TODO fare che se non c'è nulla scritto nel file data parte lo stesso
 	retrieveData(mainView)
+	hideShowAll(grids, true)
+
 	//set content and run
 	w.SetContent(
 		masterView,
@@ -395,6 +430,7 @@ func loginHandler(a fyne.App, w fyne.Window) {
 			if !confirmed {
 				a.Quit()
 			}
+			hideShowAll(grids, false)
 		}, w)
 
 		agreement.Show()
@@ -413,6 +449,7 @@ func loginHandler(a fyne.App, w fyne.Window) {
 			if !confirmed {
 				a.Quit()
 			}
+			hideShowAll(grids, false)
 		}, w)
 
 		agreement.Show()
@@ -442,8 +479,9 @@ func saveData(service string, username string, password string) {
 	crypt.EncryptDataStringInFile([]byte(key), fmt.Sprintf("%s:%s:%s", service, username, password), "data/DATA")
 }
 
+//get data from the files and add it to the view
 func retrieveData(mainView *fyne.Container) {
-	//checks if it is the first time the application is opened and returns, because I don't want the user to write the key the first time he enters in the application
+	//checks if it is the first time the application is opened and returns
 	tmp, err := ioutil.ReadFile("data/masterKey.txt")
 	if err != nil || string(tmp) == "" {
 		return
@@ -464,6 +502,18 @@ func retrieveData(mainView *fyne.Container) {
 			usernames[getFreePosition()-1].SetText(data[j+1])
 			passwords[getFreePosition()-1].SetText(data[j+2])
 			updateView(mainView, true, i)
+		}
+	}
+}
+
+func hideShowAll(items []*fyne.Container, hide bool) {
+	if hide {
+		for _, x := range items {
+			x.Hide()
+		}
+	} else {
+		for _, x := range items {
+			x.Show()
 		}
 	}
 }
