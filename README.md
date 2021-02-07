@@ -17,7 +17,7 @@
     A simple and lightweight encrypted password manager written in Go.
     <br />
     <br />
-    <a href="https://github.com/Gyro7/Osiris-pwm/issues">Report Bug</a> || 
+    <a href="https://github.com/Gyro7/Osiris-pwm/issues">Report Bug</a> ||
     <a href="https://github.com/Gyro7/Osiris-pwm/pulls">Request Feature</a>
   </p>
 </p>
@@ -121,6 +121,43 @@ To add a new element to the grid click the white add button on the middle left.
 To delete an element, edit it so that all its entries are empty, then head to the Edit menu and click "Delete empties"
 To change theme go to File -> Settings
 
+<!-- Developing -->
+
+## Developing
+
+### Building
+
+#### Build Script
+
+A build script is provided for easy building. Docker is the only dependency.
+
+Using Docker has the following benefits:
+- Build Linux packages on Mac and Windows
+- Builds are consistent, always built the same way
+- Does not require the build chain to be installed on your workstation
+
+```
+build/docker/build.sh
+```
+
+Built artifacts will be in `build/artifacts/` when the build is complete
+```
+ls build/artifacts
+
+Osiris-pwm  
+Osiris-pwm_linux_amd64.zip  
+Osiris-pwm.SHA256SUMS
+```
+
+#### Local build tools
+
+If Docker is not an option, or you prefer to build in your own environment, you will
+need the following installed:
+- [Go toolchain](https://golang.org/dl/)
+- A C compiler (GCC), this project uses [CGO](https://golang.org/doc/install/gccgo)
+  - Debian: build-essential
+  - Fedora: @development-tools
+- This project uses [go-gl](https://github.com/go-gl/glfw), which has its own build requirements
 
 <!-- ROADMAP -->
 
