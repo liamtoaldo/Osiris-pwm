@@ -159,8 +159,6 @@ need the following installed:
   - Fedora: @development-tools
 - This project uses [go-gl](https://github.com/go-gl/glfw), which has its own build requirements
 
-## Roadmap
-
 <!-- ROADMAP -->
 
 ## Roadmap
