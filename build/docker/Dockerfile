@@ -1,3 +1,6 @@
+# This Dockerfile provides a build environment only,
+# it is not intended to be used for running Osiris-pwm.
+# See "build/docker/build.sh" for an example.
 FROM golang:1.15
 
 COPY . /app
@@ -11,7 +14,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -qq install \
 RUN rm -f build/artifacts/* || mkdir -p build/artifacts/
 
 # cgo is required, and explicitly enabled here
-RUN CGO_ENABLED=1 go build -o build/artifacts/Osiris-pwm 
+RUN CGO_ENABLED=1 go build -o build/artifacts/Osiris-pwm
 
 # zip built binary and get the checksums
 WORKDIR /app/build/artifacts
