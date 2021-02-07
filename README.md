@@ -95,7 +95,8 @@ chmod +x Osiris-pwm
 ./Osiris-pwm
 ```
 #### Any other Linux distribution (Build from source)
-For this method you need to have Go installed
+For this method you need to have Go installed, build-essential and a few dependencies (even tho they should be downloaded automatically)  
+If you encounter any problems in installing dependencies, follow this guide: https://github.com/go-gl/glfw
 ```sh
 # clone and go into repo
 git clone https://github.com/Gyro7/Osiris-pwm.git
