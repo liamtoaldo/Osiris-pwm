@@ -111,6 +111,7 @@ go build
 ```sh
 Go to Releases and download the setup for Windows (.exe file)
 Follow the simple steps
+IF THE PROGRAM DOESN'T WORK, RIGHT CLICK ON IT, GO TO PROPERTIES, GO TO COMPATIBILITY AND SELECTE "ALWAYS EXECUTE AS ADMINISTRATOR"
 ```
 ## Usage
 
