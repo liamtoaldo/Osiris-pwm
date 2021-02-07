@@ -253,11 +253,6 @@ func setTextSize(size float32, text ...*canvas.Text) {
 	}
 }
 
-//TODO
-// func retrieveData(a fyne.App, w fyne.Window) {
-// 	//for i := 0; i < len(services); i++ {
-// 	//services[i] = file.Text ...
-
 func getFreePosition() int {
 	return len(services)
 }
@@ -461,6 +456,7 @@ func loginHandler(a fyne.App, w fyne.Window) {
 			if keyEntry.Text != KEY {
 				agreement.Show()
 			}
+			//FIXME when clicked on confirm, even if the key is incorrect the passwords show.
 		})
 	}
 }
