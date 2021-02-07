@@ -170,4 +170,4 @@ Project Link: [https://github.com/Gyro7/Osiris-pwm](https://github.com/Gyro7/Osi
 [issues-shield]: https://img.shields.io/github/issues/Gyro7/Osiris-pwm.svg?style=flat-square
 [issues-url]: https://github.com/Gyro7/Osiris-pwm/issues
 [license-shield]: https://img.shields.io/github/license/Gyro7/Osiris-pwm.svg?style=flat-square
-[license-url]: https://github.com/Gyro7/Osiris-pwm/blob/master/LICENSE
+[license-url]: https://github.com/Gyro7/Osiris-pwm/blob/main/LICENSE
