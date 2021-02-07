@@ -89,8 +89,10 @@ chmod +x Osiris-pwm
 unzip -q Osiris-pwm1.0.zip
 # go into the directory
 cd Osiris-pwm1.0
-# install the program to the bin folder
-sudo install -m755 Osiris-pwm /usr/bin/Osiris-pwm
+# change mod
+chmod +x Osiris-pwm
+# run
+./Osiris-pwm
 ```
 #### Any other Linux distribution (Build from source)
 For this method you need to have Go installed
