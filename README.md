@@ -129,8 +129,12 @@ To change theme go to File -> Settings
 #### Build Script
 
 A build script is provided for easy building on Linux. Docker is the only dependency.
-Using Docker allows you to build the package without installing the build chain to your
-workstation.
+
+Using Docker has the following benefits:
+- Build Linux packages on Mac and Windows
+- Builds are consistent, always built the same way
+- Does not require the build chain to be installed on your workstation
+
 ```
 build/docker/build.sh
 ```
