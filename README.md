@@ -72,18 +72,15 @@ sudo apt install ./Osiris-pwm1.0.deb
 ```
 #### Any other Linux distribution
 ```sh
+# select where to download the program, for example here I download it to the Desktop
+cd Desktop
 # clone and go into repo
 git clone https://github.com/Gyro7/Osiris-pwm.git
 cd Osiris-pwm/
-# install
-sudo install -m755 Osiris-pwm /usr/bin/Osiris-pwm
-# copy the gui folder to bin
-sudo cp -r gui/ /usr/bin/
-# go back and remove the download
-cd ..
-rm -rf Osiris-pwm/
+# change mod
+chmod +x Osiris-pwm
 # run
-Osiris-pwm
+./Osiris-pwm
 ```
 #### Any other Linux distribution (Releases method)
 ```sh
