@@ -88,7 +88,7 @@ chmod +x Osiris-pwm
 # decompress it
 unzip -q Osiris-pwm1.0.zip
 # go into the directory
-cd Osiris-pwm1.0
+cd Osiris-pwm
 # change mod
 chmod +x Osiris-pwm
 # run
