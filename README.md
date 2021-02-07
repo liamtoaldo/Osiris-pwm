@@ -32,6 +32,7 @@
     -   [Prerequisites](#prerequisites)
     -   [Installation](#installation)
 -   [Usage](#usage)
+-   [Development](#developing)
 -   [Roadmap](#roadmap)
 -   [Contributing](#contributing)
 -   [License](#license)
