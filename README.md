@@ -78,7 +78,7 @@ cd Osiris-pwm/
 # install
 sudo install -m755 Osiris-pwm /usr/bin/Osiris-pwm
 # copy the gui folder to bin
-sudo cp gui/ /usr/bin/Osiris-pwm
+sudo cp -r gui/ /usr/bin/
 # go back and remove the download
 cd ..
 rm -rf Osiris-pwm/
