@@ -11,7 +11,7 @@
     <img src="https://i.imgur.com/gwqaZhK.png" alt="Logo" heigth="60">
   </a>
 
-  <h3 align="center">GoFetch</h3>
+  <h3 align="center">Osiris Password Manager</h3>
 
   <p align="center">
     A simple and lightweight encrypted password manager written in Go.
