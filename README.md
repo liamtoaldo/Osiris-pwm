@@ -99,14 +99,14 @@ sudo install -m755 Osiris-pwm /usr/bin/Osiris-pwm
 For this method you need to have Go installed
 ```sh
 # clone and go into repo
-git clone https://github.com/Gyro7/gofetch.git
-cd gofetch/
+git clone https://github.com/Gyro7/Osiris-pwm.git
+cd Osiris-pwm/
 # remove the linux executable
-rm gofetch
+rm Osiris-pwm
 # build
 go build
 # run
-./gofetch
+./Osiris-pwm
 ```
 #### Windows
 ```sh
