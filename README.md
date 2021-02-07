@@ -128,7 +128,7 @@ To change theme go to File -> Settings
 
 #### Build Script
 
-A build script is provided for easy building on Linux. Docker is the only dependency.
+A build script is provided for easy building. Docker is the only dependency.
 
 Using Docker has the following benefits:
 - Build Linux packages on Mac and Windows
