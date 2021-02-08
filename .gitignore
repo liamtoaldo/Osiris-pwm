@@ -13,7 +13,7 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
-Osiris-pwm
+data/*
 data/termsAccepted.txt
 data/autoCompletion.txt
 data/keyShown.txt
