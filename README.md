@@ -8,7 +8,7 @@
 <br />
 <p align="center">
   <a href="https://github.com/Gyro7/Osiris-pwm">
-    <img src="https://i.imgur.com/gwqaZhK.png" alt="Logo" heigth="60">
+    <img src="https://i.imgur.com/gwqaZhK.png" alt="Logo" height="60">
   </a>
 
   <h3 align="center">Osiris Password Manager</h3>
@@ -20,7 +20,6 @@
     <a href="https://github.com/Gyro7/Osiris-pwm/issues">Report Bug</a> ||
     <a href="https://github.com/Gyro7/Osiris-pwm/pulls">Request Feature</a>
   </p>
-</p>
 
 <!-- TABLE OF CONTENTS -->
 
@@ -61,7 +60,7 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
--   linux or windows (not available for mac at the moment)
+-   linux or windows (available for macOS only with Docker)
 
 ### Installation
 
@@ -113,7 +112,7 @@ go build
 ```sh
 Go to Releases and download the setup for Windows (.exe file)
 Follow the simple steps
-IF THE PROGRAM DOESN'T WORK, RIGHT CLICK ON IT, GO TO PROPERTIES, GO TO COMPATIBILITY AND SELECTE "ALWAYS EXECUTE AS ADMINISTRATOR"
+IF THE PROGRAM DOESN'T WORK, RIGHT CLICK ON IT, GO TO PROPERTIES, GO TO COMPATIBILITY AND SELECT "ALWAYS EXECUTE AS ADMINISTRATOR"
 ```
 ## Usage
 
