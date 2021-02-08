@@ -22,13 +22,12 @@ import (
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 
-	//"github.com/atotto/clipboard"
 	"github.com/d-tsuji/clipboard"
 )
 
 const (
 	width  = 1024
-	heigth = 768
+	height = 768
 )
 
 //slices of buttons
@@ -100,7 +99,6 @@ func Call() {
 			}
 		}
 	})
-	//scorri tutti file
 
 	helpMenu := fyne.NewMenu("Help",
 		fyne.NewMenuItem("Documentation", func() {
@@ -170,7 +168,7 @@ func Call() {
 		layout.NewSpacer(),
 		legend,
 	)
-	//masterview of the app (so that it has a layout.NewSpacer after the last element)
+	//masterView of the app (so that it has a layout.NewSpacer after the last element)
 	masterView := container.NewVSplit(container.NewVScroll(mainView), layout.NewSpacer())
 
 	addButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("add", getIcon("gui/add.png")), func() {
@@ -234,7 +232,7 @@ func Call() {
 	w.SetContent(
 		masterView,
 	)
-	w.Resize(fyne.NewSize(width, heigth))
+	w.Resize(fyne.NewSize(width, height))
 	w.CenterOnScreen()
 	w.ShowAndRun()
 
@@ -373,7 +371,7 @@ func keyHandler(a fyne.App, w fyne.Window) {
 
 	//code to handle the keyShown file
 	if string(data) == "" {
-		showkey := dialog.NewCustomConfirm(" Here is your key, copy it and save it somewhere, because you'll be asked it \n every time you open Osiris if you don't enable auto-completion.", "Confirm", "Cancel", container.NewVBox(keyLabel, widget.NewButtonWithIcon("Copy", theme.ContentCopyIcon(), func() {
+		showKey := dialog.NewCustomConfirm(" Here is your key, copy it and save it somewhere, because you'll be asked it \n every time you open Osiris if you don't enable auto-completion.", "Confirm", "Cancel", container.NewVBox(keyLabel, widget.NewButtonWithIcon("Copy", theme.ContentCopyIcon(), func() {
 			clipboard.Set(keyLabel.Text)
 		}), autoCompletion), func(accepted bool) {
 			f := "data/keyShown.txt"
@@ -389,7 +387,7 @@ func keyHandler(a fyne.App, w fyne.Window) {
 				}
 			}
 		}, w)
-		showkey.Show()
+		showKey.Show()
 	}
 }
 
@@ -421,13 +419,15 @@ func loginHandler(a fyne.App, w fyne.Window) {
 			if !confirmed {
 				a.Quit()
 			}
-			hideShowAll(grids, false)
 		}, w)
 
 		agreement.Show()
 		agreement.SetOnClosed(func() {
 			if keyEntry.Text != KEY {
 				agreement.Show()
+			} else {
+				//show the keys only if the key is correct and the user enters in the application
+				hideShowAll(grids, false)
 			}
 		})
 	}
@@ -440,7 +440,6 @@ func loginHandler(a fyne.App, w fyne.Window) {
 			if !confirmed {
 				a.Quit()
 			}
-			hideShowAll(grids, false)
 		}, w)
 
 		agreement.Show()
@@ -448,19 +447,15 @@ func loginHandler(a fyne.App, w fyne.Window) {
 		agreement.SetOnClosed(func() {
 			if keyEntry.Text != KEY {
 				agreement.Show()
+			} else {
+				hideShowAll(grids, false)
 			}
-			//FIXME when clicked on confirm, even if the key is incorrect the passwords show.
 		})
 	}
 }
 
 //get the files where the user's data is written and return the decrypted key
 func getDataFiles() string {
-	// _, err := ioutil.ReadFile("data/DATA")
-	// if err != nil {
-	// 	os.Create("data/DATA")
-	// }
-
 	key := crypt.DecryptStringFromFile(crypt.GetGlobalKey(), "data/masterKey.txt")
 	return key
 }
