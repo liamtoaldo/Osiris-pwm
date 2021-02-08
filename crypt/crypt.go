@@ -3,24 +3,25 @@ package crypt
 import (
 	"crypto/aes"
 	"crypto/cipher"
-	crand "crypto/rand"
+	"crypto/rand"
 	"fmt"
 	"io"
 	"io/ioutil"
-	"math/rand"
+	"math/big"
+
 	"os"
-	"time"
 )
 
 //available characters for keys
-var availableCharacters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+var availableCharacters = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!-$£%&/()=?^'*@°#§")
 
 //GenerateKey is the main function for generating a new key (it's only used once if the user doesn't delete or corrupt the files where it is stored)
 func GenerateKey() string {
-	rand.Seed(time.Now().UnixNano())
 	b := make([]rune, 32)
 	for i := range b {
-		b[i] = availableCharacters[rand.Intn(len(availableCharacters))]
+		//a random position generated with the crypto library, so it's way more secure and
+		randomPos, _ := rand.Int(rand.Reader, big.NewInt(int64(len(availableCharacters)-1)))
+		b[i] = availableCharacters[randomPos.Int64()]
 	}
 	return string(b)
 }
@@ -46,7 +47,7 @@ func EncryptStringInFile(key []byte, text string, file string) {
 
 	nonce := make([]byte, gcm.NonceSize())
 	//random sequence
-	if _, err = io.ReadFull(crand.Reader, nonce); err != nil {
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
 		fmt.Println(err)
 	}
 
@@ -108,7 +109,7 @@ func EncryptDataStringInFile(key []byte, text string, file string) {
 
 	nonce := make([]byte, gcm.NonceSize())
 	//random sequence
-	if _, err = io.ReadFull(crand.Reader, nonce); err != nil {
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
 		fmt.Println(err)
 	}
 
