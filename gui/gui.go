@@ -38,7 +38,7 @@ var (
 	passwords []*widget.Entry
 	grids     []*fyne.Container
 
-	isLocked bool = false
+	isLocked = false
 )
 
 //Call calls the main gui application
@@ -319,13 +319,6 @@ func handleLock(service *widget.Entry, username *widget.Entry, password *widget.
 	password.Enable()
 }
 
-func remove(slice []*fyne.Container, s int) []*fyne.Container {
-	if len(slice) > 0 {
-		slice = slice[:len(slice)-1]
-	}
-	return slice
-}
-
 func toSHandler(a fyne.App, w fyne.Window) {
 	//show dialog which says to accept terms of service
 	data, err := ioutil.ReadFile("data/termsAccepted.txt")
@@ -381,7 +374,7 @@ func keyHandler(a fyne.App, w fyne.Window) {
 	//code to handle the keyShown file
 	if string(data) == "" {
 		showkey := dialog.NewCustomConfirm(" Here is your key, copy it and save it somewhere, because you'll be asked it \n every time you open Osiris if you don't enable auto-completion.", "Confirm", "Cancel", container.NewVBox(keyLabel, widget.NewButtonWithIcon("Copy", theme.ContentCopyIcon(), func() {
-			clipboard.Set((keyLabel.Text))
+			clipboard.Set(keyLabel.Text)
 		}), autoCompletion), func(accepted bool) {
 			f := "data/keyShown.txt"
 			if accepted {
