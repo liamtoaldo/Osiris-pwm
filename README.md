@@ -17,7 +17,7 @@
     A simple and lightweight encrypted password manager written in Go.
     <br />
     <br />
-    <a href="https://github.com/Gyro7/Osiris-pwm/issues">Report Bug</a> || 
+    <a href="https://github.com/Gyro7/Osiris-pwm/issues">Report Bug</a> ||
     <a href="https://github.com/Gyro7/Osiris-pwm/pulls">Request Feature</a>
   </p>
 </p>
@@ -32,6 +32,7 @@
     -   [Prerequisites](#prerequisites)
     -   [Installation](#installation)
 -   [Usage](#usage)
+-   [Development](#developing)
 -   [Roadmap](#roadmap)
 -   [Contributing](#contributing)
 -   [License](#license)
@@ -95,7 +96,8 @@ chmod +x Osiris-pwm
 ./Osiris-pwm
 ```
 #### Any other Linux distribution (Build from source)
-For this method you need to have Go installed
+For this method you need to have Go installed, build-essential and a few dependencies (even tho they should be downloaded automatically)  
+If you encounter any problems in installing dependencies, follow this guide: https://github.com/go-gl/glfw
 ```sh
 # clone and go into repo
 git clone https://github.com/Gyro7/Osiris-pwm.git
@@ -111,6 +113,7 @@ go build
 ```sh
 Go to Releases and download the setup for Windows (.exe file)
 Follow the simple steps
+IF THE PROGRAM DOESN'T WORK, RIGHT CLICK ON IT, GO TO PROPERTIES, GO TO COMPATIBILITY AND SELECTE "ALWAYS EXECUTE AS ADMINISTRATOR"
 ```
 ## Usage
 
@@ -119,6 +122,43 @@ To add a new element to the grid click the white add button on the middle left.
 To delete an element, edit it so that all its entries are empty, then head to the Edit menu and click "Delete empties"
 To change theme go to File -> Settings
 
+<!-- Developing -->
+
+## Developing
+
+### Building
+
+#### Build Script
+
+A build script is provided for easy building. Docker is the only dependency.
+
+Using Docker has the following benefits:
+- Build Linux packages on Mac and Windows
+- Builds are consistent, always built the same way
+- Does not require the build chain to be installed on your workstation
+
+```
+build/docker/build.sh
+```
+
+Built artifacts will be in `build/artifacts/` when the build is complete
+```
+ls build/artifacts
+
+Osiris-pwm  
+Osiris-pwm_linux_amd64.zip  
+Osiris-pwm.SHA256SUMS
+```
+
+#### Local build tools
+
+If Docker is not an option, or you prefer to build in your own environment, you will
+need the following installed:
+- [Go toolchain](https://golang.org/dl/)
+- A C compiler (GCC), this project uses [CGO](https://golang.org/doc/install/gccgo)
+  - Debian: build-essential
+  - Fedora: @development-tools
+- This project uses [go-gl](https://github.com/go-gl/glfw), which has its own build requirements
 
 <!-- ROADMAP -->
 
@@ -130,7 +170,7 @@ See the [open issues](https://github.com/Gyro7/Osiris-pwm/issues) for a list of 
 
 ## Contributing
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
@@ -170,4 +210,4 @@ Project Link: [https://github.com/Gyro7/Osiris-pwm](https://github.com/Gyro7/Osi
 [issues-shield]: https://img.shields.io/github/issues/Gyro7/Osiris-pwm.svg?style=flat-square
 [issues-url]: https://github.com/Gyro7/Osiris-pwm/issues
 [license-shield]: https://img.shields.io/github/license/Gyro7/Osiris-pwm.svg?style=flat-square
-[license-url]: https://github.com/Gyro7/Osiris-pwm/blob/master/LICENSE
+[license-url]: https://github.com/Gyro7/Osiris-pwm/blob/main/LICENSE
