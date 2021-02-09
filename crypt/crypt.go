@@ -51,7 +51,7 @@ func EncryptStringInFile(key []byte, text string, file string) {
 		fmt.Println(err)
 	}
 
-	err = ioutil.WriteFile(file, gcm.Seal(nonce, nonce, textInBytes, nil), 0777)
+	err = ioutil.WriteFile(file, gcm.Seal(nonce, nonce, textInBytes, nil), 770)
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -122,7 +122,7 @@ func EncryptDataStringInFile(key []byte, text string, file string) {
 		}
 	}
 
-	err = ioutil.WriteFile(file, gcm.Seal(nonce, nonce, textInBytes, nil), 0777)
+	err = ioutil.WriteFile(file, gcm.Seal(nonce, nonce, textInBytes, nil), 770)
 	if err != nil {
 		fmt.Println(err)
 	}
