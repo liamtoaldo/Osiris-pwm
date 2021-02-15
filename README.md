@@ -196,6 +196,7 @@ Project Link: [https://github.com/Gyro7/Osiris-pwm](https://github.com/Gyro7/Osi
 
 -   [Myself for doing everything.](https://github.com/Gyro7)
 -   [The Fyne library for making it easier](https://fyne.io/)
+-   [Joseph Sirianni for contributing](https://github.com/jsirianni)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
