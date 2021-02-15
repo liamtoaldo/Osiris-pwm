@@ -20,7 +20,7 @@ func GenerateKey() string {
 	b := make([]rune, 32)
 	for i := range b {
 		//a random position generated with the crypto library, so it's way more secure and
-		randomPos, _ := rand.Int(rand.Reader, big.NewInt(int64(len(availableCharacters)-1)))
+		randomPos, _ := rand.Int(rand.Reader, big.NewInt(int64(len(availableCharacters)-2))) //minus 2 because otherwise the key length will be 33, so invalid
 		b[i] = availableCharacters[randomPos.Int64()]
 	}
 	return string(b)
