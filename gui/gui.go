@@ -131,6 +131,28 @@ func Call() {
 	title.TextSize = 34
 	title.TextStyle.Bold = true
 	title.Alignment = fyne.TextAlignCenter
+
+	//the main searchbar with the entry, the clear button and the main search button
+	searchEntry := widget.NewEntry()
+	searchEntry.SetPlaceHolder("Search a service")
+	searchClear := widget.NewButton("X", func() {
+		go searchEntry.SetText("")
+		for i := 0; i < len(grids); i++ {
+			go grids[i].Show()
+		}
+	})
+	searchButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("find", getIcon("gui/find.png")), func() {
+		for i := 0; i < len(grids); i++ {
+			if strings.Contains(services[i].Text, searchEntry.Text) || strings.Contains(usernames[i].Text, searchEntry.Text) || strings.Contains(passwords[i].Text, searchEntry.Text) {
+				go grids[i].Show()
+			} else {
+				go grids[i].Hide()
+			}
+		}
+	})
+	searchbar := container.NewGridWithColumns(3, searchEntry, searchClear, searchButton)
+
+	//description split in multiple text because I can't use "\n" with this widget
 	description := [6]*canvas.Text{}
 	description[0] = canvas.NewText("This is the first version of Osiris, it may be a bit buggy.", theme.PrimaryColor())
 	description[1] = canvas.NewText("To add a new element, click the add button below", theme.PrimaryColor())
@@ -169,7 +191,7 @@ func Call() {
 		legend,
 	)
 	//masterView of the app (so that it has a layout.NewSpacer after the last element)
-	masterView := container.NewVSplit(container.NewVScroll(mainView), layout.NewSpacer())
+	masterView := container.NewVSplit(container.NewVScroll(mainView), container.NewVBox(layout.NewSpacer(), searchbar))
 
 	addButton := widget.NewButtonWithIcon("", fyne.NewStaticResource("add", getIcon("gui/add.png")), func() {
 		services = append(services, widget.NewEntry())
