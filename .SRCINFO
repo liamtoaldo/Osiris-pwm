@@ -1,0 +1,11 @@
+pkgbase = Osiris-pwm
+	pkgdesc = A simple and lightweight encrypted password manager written in Go.
+	pkgver = 1.1
+	pkgrel = 1
+	arch = x86_64
+	license = MIT
+	source = https://github.com/Gyro7/Osiris-pwm.git
+	md5sums = f30fbe7b5b77dce2286aa1e96011e1ec
+
+pkgname = Osiris-pwm
+
