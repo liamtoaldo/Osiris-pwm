@@ -187,7 +187,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-gyro - [gyro@sach1.tk](mailto:gyro@sach1.tk)
+gyro - [gyroo@tuta.io](mailto:gyroo@tuta.io)
 Project Link: [https://github.com/Gyro7/Osiris-pwm](https://github.com/Gyro7/Osiris-pwm)
 
 <!-- ACKNOWLEDGEMENTS -->
