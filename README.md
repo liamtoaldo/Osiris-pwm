@@ -7,7 +7,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/Gyro7/Osiris-pwm">
+  <a href="https://github.com/liamtoaldo/Osiris-pwm">
     <img src="https://i.imgur.com/gwqaZhK.png" alt="Logo" height="60">
   </a>
 
@@ -17,8 +17,8 @@
     A simple and lightweight encrypted password manager written in Go.
     <br />
     <br />
-    <a href="https://github.com/Gyro7/Osiris-pwm/issues">Report Bug</a> ||
-    <a href="https://github.com/Gyro7/Osiris-pwm/pulls">Request Feature</a>
+    <a href="https://github.com/liamtoaldo/Osiris-pwm/issues">Report Bug</a> ||
+    <a href="https://github.com/liamtoaldo/Osiris-pwm/pulls">Request Feature</a>
   </p>
 
 <!-- TABLE OF CONTENTS -->
@@ -75,7 +75,7 @@ sudo apt install ./Osiris-pwm1.0.deb
 # select where to download the program, for example here I download it to the Desktop
 cd Desktop
 # clone and go into repo
-git clone https://github.com/Gyro7/Osiris-pwm.git
+git clone https://github.com/liamtoaldo/Osiris-pwm.git
 cd Osiris-pwm/
 # change mod
 chmod +x Osiris-pwm
@@ -99,7 +99,7 @@ For this method you need to have Go installed, build-essential and a few depende
 If you encounter any problems in installing dependencies, follow this guide: https://github.com/go-gl/glfw
 ```sh
 # clone and go into repo
-git clone https://github.com/Gyro7/Osiris-pwm.git
+git clone https://github.com/liamtoaldo/Osiris-pwm.git
 cd Osiris-pwm/
 # remove the linux executable
 rm Osiris-pwm
@@ -163,7 +163,7 @@ need the following installed:
 
 ## Roadmap
 
-See the [open issues](https://github.com/Gyro7/Osiris-pwm/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/liamtoaldo/Osiris-pwm/issues) for a list of proposed features (and known issues).
 
 <!-- CONTRIBUTING -->
 
@@ -186,28 +186,28 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <!-- CONTACT -->
 
 ## Contact
+Me - [liamtoaldo+gh@gmail.com](mailto:liamtoaldo+gh@gmail.com)
 
-gyro - [gyroo@tuta.io](mailto:gyroo@tuta.io)
-Project Link: [https://github.com/Gyro7/Osiris-pwm](https://github.com/Gyro7/Osiris-pwm)
+Project Link: [https://github.com/liamtoaldo/Osiris-pwm](https://github.com/liamtoaldo/Osiris-pwm)
 
 <!-- ACKNOWLEDGEMENTS -->
 
 ## Acknowledgements
 
--   [Myself for doing everything.](https://github.com/Gyro7)
+-   [Myself for doing everything.](https://github.com/liamtoaldo)
 -   [The Fyne library for making it easier](https://fyne.io/)
 -   [Joseph Sirianni for contributing](https://github.com/jsirianni)
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/Gyro7/Osiris-pwm.svg?style=flat-square
-[contributors-url]: https://github.com/Gyro7/Osiris-pwm/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/Gyro7/Osiris-pwm.svg?style=flat-square
-[forks-url]: https://github.com/Gyro7/Osiris-pwm/network/members
-[stars-shield]: https://img.shields.io/github/stars/Gyro7/Osiris-pwm.svg?style=flat-square
-[stars-url]: https://github.com/Gyro7/Osiris-pwm/stargazers
-[issues-shield]: https://img.shields.io/github/issues/Gyro7/Osiris-pwm.svg?style=flat-square
-[issues-url]: https://github.com/Gyro7/Osiris-pwm/issues
-[license-shield]: https://img.shields.io/github/license/Gyro7/Osiris-pwm.svg?style=flat-square
-[license-url]: https://github.com/Gyro7/Osiris-pwm/blob/main/LICENSE
+[contributors-shield]: https://img.shields.io/github/contributors/liamtoaldo/Osiris-pwm.svg?style=flat-square
+[contributors-url]: https://github.com/liamtoaldo/Osiris-pwm/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/liamtoaldo/Osiris-pwm.svg?style=flat-square
+[forks-url]: https://github.com/liamtoaldo/Osiris-pwm/network/members
+[stars-shield]: https://img.shields.io/github/stars/liamtoaldo/Osiris-pwm.svg?style=flat-square
+[stars-url]: https://github.com/liamtoaldo/Osiris-pwm/stargazers
+[issues-shield]: https://img.shields.io/github/issues/liamtoaldo/Osiris-pwm.svg?style=flat-square
+[issues-url]: https://github.com/liamtoaldo/Osiris-pwm/issues
+[license-shield]: https://img.shields.io/github/license/liamtoaldo/Osiris-pwm.svg?style=flat-square
+[license-url]: https://github.com/liamtoaldo/Osiris-pwm/blob/main/LICENSE

@@ -3,14 +3,14 @@
 # NOTE: Please fill out the license field for your package! If it is unknown,
 # then please put 'unknown'.
 
-# Maintainer: Gyro7 <mailytdlg7@gmail.com>
+# Maintainer: liamtoaldo <mailytdlg7@gmail.com>
 pkgname="Osiris-pwm"
 pkgver=1.1
 pkgrel=1
 pkgdesc="A simple and lightweight encrypted password manager written in Go."
 arch=("x86_64")
 license=('MIT')
-source=("https://github.com/Gyro7/Osiris-pwm.git")
+source=("https://github.com/liamtoaldo/Osiris-pwm.git")
 
 build() {
     if [[ -d "Osiris-pwm" ]]
@@ -18,7 +18,7 @@ build() {
         echo "Directory already exists, removing the previous version"
         rm -rf "Osiris-pwm"
     fi
-    git clone "https://github.com/Gyro7/Osiris-pwm.git"
+    git clone "https://github.com/liamtoaldo/Osiris-pwm.git"
 	cd "Osiris-pwm/"
 	go build
 }

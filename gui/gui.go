@@ -102,16 +102,16 @@ func Call() {
 
 	helpMenu := fyne.NewMenu("Help",
 		fyne.NewMenuItem("Documentation", func() {
-			u, _ := url.Parse("https://github.com/Gyro7/Osiris-pwm")
+			u, _ := url.Parse("https://github.com/liamtoaldo/Osiris-pwm")
 			_ = a.OpenURL(u)
 		}),
 		fyne.NewMenuItem("Request feature", func() {
-			u, _ := url.Parse("https://github.com/Gyro7/Osiris-pwm/pulls")
+			u, _ := url.Parse("https://github.com/liamtoaldo/Osiris-pwm/pulls")
 			_ = a.OpenURL(u)
 		}),
 		fyne.NewMenuItemSeparator(),
 		fyne.NewMenuItem("Report a bug", func() {
-			u, _ := url.Parse("https://github.com/Gyro7/Osiris-pwm/issues/new")
+			u, _ := url.Parse("https://github.com/liamtoaldo/Osiris-pwm/issues/new")
 			_ = a.OpenURL(u)
 		}))
 	mainMenu := fyne.NewMainMenu(
@@ -348,7 +348,7 @@ func toSHandler(a fyne.App, w fyne.Window) {
 	}
 
 	if string(data) == "" {
-		agreement := dialog.NewConfirm("Terms of Service", "Osiris password manager is provided as is and without guarantees of any kind,\n by accepting you confirm that I, Gyro7, take no responsibilities on your data\n and I am not going to help you in case of lost/stolen data\n", func(accepted bool) {
+		agreement := dialog.NewConfirm("Terms of Service", "Osiris password manager is provided as is and without guarantees of any kind,\n by accepting you confirm that I, liamtoaldo, take no responsibilities on your data\n and I am not going to help you in case of lost/stolen data\n", func(accepted bool) {
 			f := "data/termsAccepted.txt"
 			if accepted == true {
 				crypt.EncryptStringInFile(crypt.GetToSKey(), "true", f)
